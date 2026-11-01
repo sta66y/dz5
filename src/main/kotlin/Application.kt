@@ -1,19 +1,16 @@
-package io.koraframework.guide.gettingstarted
-
-import io.koraframework.application.graph.KoraApplication
-import io.koraframework.common.annotation.KoraApp
-import io.koraframework.config.hocon.HoconConfigModule
-import io.koraframework.http.server.undertow.UndertowPublicHttpServerModule
-import io.koraframework.json.common.JsonModule
-import io.koraframework.logging.logback.LogbackModule
+import ru.tinkoff.kora.application.graph.KoraApplication
+import ru.tinkoff.kora.application.graph.Node
+import ru.tinkoff.kora.common.KoraApp
 
 @KoraApp
-interface Application :
-    HoconConfigModule,
-    JsonModule,
-    UndertowPublicHttpServerModule,
-    LogbackModule
+interface Application
 
 fun main() {
-    KoraApplication.run(ApplicationGraph::graph)
+    val draw = ApplicationGraph.graph()
+    val graph = KoraApplication.run { draw }
+    val root = draw.findNodeByType(ExampleService::class.java)
+    @Suppress("UNCHECKED_CAST")
+    val service = graph.get(root as Node<ExampleService>)
+
+    println(service.greet())
 }
